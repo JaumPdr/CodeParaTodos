@@ -110,13 +110,13 @@ class Menu:
             elif escolhaDisciplina in [str(i) for i in range(1, len(disciplinas)+1)]:
                 idx = int(escolhaDisciplina) - 1
                 disciplinaEscolhida = disciplinas[idx]     
-                Menu.menuDaDisciplinaEscolhida(disciplinaEscolhida)
+                Menu.menuDisciplinaEscolhida(disciplinaEscolhida)
             else:
                 Utils.formatarTexto("\n⚠️  Opção inválida! Tente novamente.\n", velocidade=0.03)
 
     
     @staticmethod
-    def menuDaDisciplinaEscolhida(disciplina):
+    def menuDisciplinaEscolhida(disciplina):
         """
         Menu interno de cada disciplina. Permite:
         1) Cadastrar aluno

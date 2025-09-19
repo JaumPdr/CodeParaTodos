@@ -23,6 +23,6 @@ class Utils:
     def media(nota1, nota2):
         """
         Calcula a média simples entre duas notas.
-        Retorna o valor numérico da média.
+        Retorna o valor numérico da média com 2 casas decimais.
         """
-        return (nota1 + nota2) / 2
+        return round((nota1 + nota2) / 2, 2)

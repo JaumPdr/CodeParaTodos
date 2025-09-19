@@ -4,16 +4,16 @@ import time
 import getpass
 import re
 
-"""Classe que gerencia todos os menus do SIGA, incluindo apresentação, login e menus de disciplinas."""
+"""Classe que gerencia todos os menus do CodeParaTodos, incluindo apresentação, login e menus de disciplinas."""
 class Menu:
     """
-    Exibe a apresentação do SIGA com informações sobre funcionalidades
+    Exibe a apresentação do CodeParaTodos com informações sobre funcionalidades
     e uma mensagem de boas-vindas ao professor.
     """
     @staticmethod
     def apresentacao():
         print("🔹" * 30)
-        Utils.formatarTexto("\n  🎓  BEM-VINDO AO SIGA - Sistema de Gestão Acadêmico  🎓\n", velocidade=0.04)
+        Utils.formatarTexto("\n            🎓  BEM-VINDO AO CodeParaTodos  🎓\n", velocidade=0.04)
         print("🔹" * 30)
         Utils.formatarTexto("\n  Um sistema acadêmico simples e eficiente, desenvolvido", velocidade=0.04)
         Utils.formatarTexto("  para auxiliar professores na gestão de alunos.\n", velocidade=0.04)
@@ -31,18 +31,21 @@ class Menu:
 
     @staticmethod
     def login():
-        """Solicita usuário e senha para acessar o SIGA."""
+        """Solicita usuário e senha para acessar o CodeParaTodos."""
         usuario = "professor"
         senha = "123456"
 
-        Utils.formatarTexto("👉 Para acessar o SIGA, faça seu login abaixo:\n", velocidade=0.04)
+        # Salva o usuário no CSV
+        Cadastro.salvarUsuario(usuario, senha)
+
+        Utils.formatarTexto("👉 Para acessar o CodeParaTodos, faça seu login abaixo:\n", velocidade=0.04)
         while True:
             print("             👤")
             usuarioInserido = input("          Usuário: ").strip().lower()
             senhaInserida = getpass.getpass("          Senha: ").strip()
 
             if usuarioInserido == usuario and senhaInserida == senha:
-                Utils.formatarTexto(f"\n✅ Acesso concedido! Bem-vindo(a) ao SIGA, {usuario}.", velocidade=0.04)
+                Utils.formatarTexto(f"\n✅ Acesso concedido! Bem-vindo(a) ao CodeParaTodos, {usuario}.", velocidade=0.04)
                 break
             else:
                 print("\n❌ Usuário ou senha incorretos. Tente novamente!\n")
@@ -53,14 +56,14 @@ class Menu:
         Utils.formatarTexto("\nSaindo do Sistema...🔄", velocidade=0.05)
         time.sleep(1)
         print("\n" + "🔹" * 30)
-        Utils.formatarTexto("\n        👋 Até logo! Obrigado por usar o SIGA. 🎓\n", velocidade=0.04)
+        Utils.formatarTexto("\n    👋 Até logo! Obrigado por usar o CodeParaTodos. 🎓\n", velocidade=0.04)
         print("🔹" * 30)
         time.sleep(1.5)
         exit()
 
     @staticmethod
     def menuPrincipal():
-        """Menu principal do SIGA que direciona para o menu de disciplinas ou encerra o sistema."""
+        """Menu principal do CodeParaTodos que direciona para o menu de disciplinas ou encerra o sistema."""
         while True:
            Utils.formatarTexto("   \n⬇️   Escolha uma das opções abaixo ⬇️\n", velocidade=0.04)
            print("           (1) Menu ☰")
@@ -85,7 +88,7 @@ class Menu:
         Menu com a lista de disciplinas. 
         Permite escolher uma disciplina para entrar no menu interno ou voltar ao menu principal.
         """
-        disciplinas = ["Voltar ao menu principal", "Matemática", "Física", "Química", "Biologia", "História", "Geografia", "Filosofia", "Sociologia", "Português", "Inglês", "Artes", "Educação Física"]
+        disciplinas = ["Voltar ao menu principal", "Pensamento lógico computacional", "Segurança digital", "Programação em Python"]
 
         while True:
             print("🔹" * 19)
@@ -122,8 +125,8 @@ class Menu:
         """
         while True:
             print("\n" + "🔹" * 24)
-            Utils.formatarTexto(f"\n        🎓 DISCIPLINA: {disciplina}\n", velocidade=0.03)
-            Utils.formatarTexto(f"      Bem-vindo ao menu da disciplina!", velocidade=0.03)
+            Utils.formatarTexto(f"\n🎓 DISCIPLINA: {disciplina}\n", velocidade=0.03)
+            Utils.formatarTexto(f"✨ Bem-vindo ao menu da disciplina! ✨", velocidade=0.03)
             print("\n" + "🔹" * 24)
             Utils.formatarTexto("\nEscolha uma opção abaixo para continuar: \n", velocidade=0.03)
             print("        (1) Cadastrar aluno 📝")
@@ -151,17 +154,26 @@ class Menu:
         - Campos obrigatórios preenchidos
         - Notas válidas (0 a 10)
         """
+
+        maxNome = 60  # limite de caracteres
+
         Utils.formatarTexto("\nDigite os dados do aluno:", velocidade=0.04)
         
          # Solicita e valida campos obrigatórios
         while True:
-            nome = input("👤  Nome: ").strip()
+            nome = input("👤  Nome: ").strip().upper()
             # Verifica se o nome contém apenas letras e espaços
-            if not (nome and re.match(r'^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$', nome)):
+            if re.search(r"\d", nome):
                 Utils.formatarTexto("\n⚠️  O nome deve conter apenas letras. Tente novamente.\n", velocidade=0.03)
                 continue  # volta para pedir de novo
-            ra = input("🆔  RA: ").strip()
-            turma = input("🏫  Turma: ").strip()
+
+            # Verifica o tamanho do nome
+            if len(nome) > maxNome:
+                Utils.formatarTexto(f"\n⚠️  O nome não pode ter mais que {maxNome} caracteres!\n", velocidade=0.03)
+                continue
+
+            ra = input("🆔  RA: ").strip().upper()
+            turma = input("🏫  Turma: ").strip().upper()
 
             if nome and ra and turma:
                 break
@@ -170,15 +182,28 @@ class Menu:
 
         while True:
             try:
-                nota1 = float(input("📊  Nota 1: "))
-                nota2 = float(input("📊  Nota 2: "))
+                nota1_str = input("📊 Nota 1: ").strip()
+                nota2_str = input("📊 Nota 2: ").strip()
 
-                # Verifica se as notas estão no intervalo válido
-                if 0 <= nota1 <= 10 and 0 <= nota2 <= 10:
-                    break
-                else:
-                    Utils.formatarTexto("\n⚠️  As notas devem ser entre 0 e 10. Tente novamente.", velocidade=0.03)
-            
+                # Regex: número inteiro ou decimal com ponto ou vírgula, até 2 casas decimais, sem negativos
+                padrao = r'^\d+([.,]\d{1,2})?$'
+
+                # Verifica formato
+                if not (re.match(padrao, nota1_str) and re.match(padrao, nota2_str)):
+                    Utils.formatarTexto("\n⚠️  Digite as notas corretamente (0 a 10) e com no máximo 2 casas decimais.\n",velocidade=0.03)
+                    continue
+
+                # Converte vírgula para ponto
+                nota1 = float(nota1_str.replace(',', '.'))
+                nota2 = float(nota2_str.replace(',', '.'))
+
+                # Verifica intervalo válido
+                if not (0 <= nota1 <= 10 and 0 <= nota2 <= 10):
+                    Utils.formatarTexto("\n⚠️  As notas devem estar entre 0 e 10.\n",velocidade=0.03)
+                    continue
+
+                # Se chegou aqui, está tudo certo
+                break
             except ValueError:
                 Utils.formatarTexto("\n⚠️  Por favor, digite um número válido para as notas.", velocidade=0.03)
 

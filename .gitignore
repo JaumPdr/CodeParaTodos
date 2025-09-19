@@ -23,3 +23,6 @@ Thumbs.db
 
 # Pasta das disciplinas (onde ficam os CSVs gerados)
 disciplinas/
+
+# Pasta do usuario
+usuario/
